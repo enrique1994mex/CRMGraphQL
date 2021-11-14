@@ -50,6 +50,7 @@ const resolvers = {
         },
 
         obtenerClientesVendedor: async (_, {}, ctx) => {
+            console.log(ctx); 
             try {
                 const clientes = await Cliente.find( {vendedor: ctx.usuario.id.toString() }); 
                 return clientes
@@ -257,15 +258,18 @@ const resolvers = {
         nuevoCliente: async (_, {input}, ctx) => {
             
             //Verificar si el cliente ya está registrado
-            const {email} = input
+            const {email, nombre, apellido, empresa, telefono} = input
             
+            console.log(input);
+            console.log(ctx);
             const cliente = await Cliente.findOne({email});
             if(cliente){
                 throw new Error('Ese cliente ya está registrado');  
             }
-            const nuevoCliente = new Cliente(input); 
+            
             //Asignar el vendedor
-            nuevoCliente.vendedor = ctx.usuario.id; 
+            vendedor = ctx.usuario.id; 
+            const nuevoCliente = new Cliente({...input, vendedor});  
 
             //Guardar en la base de datos
             try {
